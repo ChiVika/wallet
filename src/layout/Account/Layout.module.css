@@ -1,0 +1,30 @@
+.layout{
+    display: flex;
+    min-height: 100vh;
+}
+.sidebar{
+    display: flex;
+    flex-direction: column;
+    max-width: 266px;
+    width: 100%;
+    text-align: center;
+    border-right: 1px solid var(--text-color);
+    padding: 55px 33px;
+}
+.headling{
+    font-size: 32px;
+    margin-bottom: 36px;
+    
+}
+.account{
+    text-decoration: none;
+    color: var(--text-color);
+
+}
+.body{
+    width: 100%;
+    padding: 109px 109px 0;
+}
+.active{
+    color: var(--primary-color-hover);
+}
