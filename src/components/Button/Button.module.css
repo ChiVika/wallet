@@ -1,0 +1,14 @@
+button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 191px;
+    height: 49px;
+    background-color: var(--primary-color);
+    color: var(--white-color);
+    border: none;
+    border-radius: 50px;
+    font-size: 16px;
+    cursor: pointer;
+
+}
