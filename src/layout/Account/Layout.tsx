@@ -3,29 +3,18 @@ import Headling from '../../components/Headling/Headling';
 import styles from './Layout.module.css';
 import cn from 'classnames';
 import Button from '../../components/Button/Button';
-import { useEffect, useState } from 'react';
-
-import { PORT } from '../../helpers/API';
-import axios from 'axios';
-import type { APIResponse } from '../../helpers/APIResponse';
-import type { Account } from '../../interfaces/Account.interface';
+import { useEffect } from 'react';
+import AccountStore from '../../store/Account.store';
 
 function Layout(){
 
-    const [accounts, setAccounts] = useState<Account[]>([]);
 
-    const getAccounts = async() => {
-        const res = await axios.get<APIResponse<Account[]>>(`${PORT}/accounts`)
-        if(res.data.success){
-            setAccounts(res.data.data);
-        }
-        else {
-            console.log('Ошибка сервера');
-        }
-    }
+    const {account, getAllAccount} = AccountStore;
     useEffect(() => {
-        getAccounts();
-    }, [])
+        getAllAccount();
+    }, [getAllAccount])
+
+
 
     const maskAccount = (cardNumber: string) => {
 
@@ -43,7 +32,7 @@ function Layout(){
             <div className={styles['sidebar']}>
                 <Headling className={styles['headling']}>Мои счета</Headling>
                 <div className={styles['container']}>
-                    {accounts.map(item => (
+                    {account.map(item => (
                         <NavLink 
                             to={`/account/${item.id}`} key={item.id} 
                             className={({isActive}) => cn(styles['account'],{

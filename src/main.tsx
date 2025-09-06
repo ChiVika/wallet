@@ -15,6 +15,10 @@ const router = createBrowserRouter([
           element: <>Контент</>
         },
         {
+          path: '/account/:id',
+          element: <>контент </>
+        },
+        {
           path: '*',
           element: <Error/>
         }
