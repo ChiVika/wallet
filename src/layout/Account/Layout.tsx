@@ -5,11 +5,12 @@ import cn from 'classnames';
 import Button from '../../components/Button/Button';
 import { useEffect } from 'react';
 import AccountStore from '../../store/Account.store';
+import { observer } from 'mobx-react-lite';
 
-function Layout(){
+const Layout = observer(() => {
 
 
-    const {account, getAllAccount} = AccountStore;
+    const {accounts, loading, getAllAccount} = AccountStore;
     useEffect(() => {
         getAllAccount();
     }, [getAllAccount])
@@ -26,19 +27,21 @@ function Layout(){
         return `${firstNumber} ${mask} ${mask} ${lastNumber}`
     }
 
+
     return(
         <>
         <div className={styles['layout']}>
             <div className={styles['sidebar']}>
                 <Headling className={styles['headling']}>Мои счета</Headling>
                 <div className={styles['container']}>
-                    {account.map(item => (
+                    {!loading && accounts.map(item => (
                         <NavLink 
                             to={`/account/${item.id}`} key={item.id} 
                             className={({isActive}) => cn(styles['account'],{
                                 [styles['active']]: isActive
                         })}>{maskAccount(item.card_number)}</NavLink>
                     ))}
+                    {loading && <>Загрузка...</>}
                 </div>
                 <Button>
                     <img src="/add.svg" alt="add" className={styles['add']}/>
@@ -54,5 +57,5 @@ function Layout(){
         
     )
 
-}
+})
 export default Layout;

@@ -4,3 +4,10 @@ export interface Account{
     balance: number,
     name: string
 }
+
+export interface currentAccount{
+    id: number,
+    card_number: string,
+    balance: number,
+    name: string
+}

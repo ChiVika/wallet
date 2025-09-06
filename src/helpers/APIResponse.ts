@@ -1,5 +1,5 @@
 export interface APIResponse<T>{
     success: boolean,
-    count: number,
+    count?: number,
     data: T
 }

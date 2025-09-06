@@ -5,7 +5,8 @@ import type { APIResponse } from "../helpers/APIResponse";
 import { PORT } from "../helpers/API";
 
 class AccountStore{
-    account: Account[] = [];
+    accounts: Account[] = [];
+    currentAccount: Account | null = null;
     loading = false;
     error: string | null = null;
 
@@ -13,19 +14,26 @@ class AccountStore{
         makeAutoObservable(this);
     }
 
+    
+
     getAllAccount = async() => {
-        this.loading = true;
-        this.error = null;
+        runInAction(() => {
+            this.loading = true;
+            this.error = null;
+        })
 
         try{
             const res = await axios.get<APIResponse<Account[]>>(`${PORT}/accounts`);
-            if(res.data.success){
-                this.account = res.data.data;
-            }
-            else {
-                this.error = 'Ошибка сервера: неуспешный ответ!';
-                console.log('Ошибка сервера');
-            }
+            runInAction(() => {
+                if(res.data.success){
+                    this.accounts = res.data.data;
+                }
+                else {
+                    this.error = 'Ошибка сервера: неуспешный ответ!';
+                    console.log('Ошибка сервера');
+                }
+            })
+            
 
         }
         catch(error){
@@ -36,7 +44,41 @@ class AccountStore{
             })
         }
         finally{
-            this.loading = false;
+            runInAction(() => {
+                this.loading = false;
+            })
+            
+        }
+    }
+
+    getAccountById = async(id: number | string) => {
+        runInAction(() => {
+            this.loading = true;
+            this.error = null;
+        })
+        
+        try{
+            const res = await axios.get<APIResponse<Account>>(`${PORT}/accounts/${id}`)
+            runInAction(() => {
+                if(res.data.success){
+                    this.currentAccount = res.data.data;
+                }
+                else{
+                    this.error = 'Ошибка сервера: неуспешный ответ!';
+                    console.log('Ошибка сервера');
+                }
+            })
+        }
+        catch(error){
+            runInAction(() => {
+                this.error = axios.isAxiosError(error) ? error.message : 'Неизвестная ошибка';
+                console.log('Ошибка при получении счета:', error);
+            })
+        }
+        finally{
+            runInAction(() => {
+                this.loading = false;
+            })
         }
     }
 }

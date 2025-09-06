@@ -4,6 +4,8 @@ import './index.css'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Layout from './layout/Account/Layout.tsx'
 import Error from './pages/Error/Error.tsx'
+import MainPage from './pages/MainPage/MainPage.tsx'
+
 
 const router = createBrowserRouter([
     {
@@ -16,7 +18,7 @@ const router = createBrowserRouter([
         },
         {
           path: '/account/:id',
-          element: <>контент </>
+          element: <><MainPage/></>
         },
         {
           path: '*',
