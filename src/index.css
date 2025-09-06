@@ -1,5 +1,5 @@
 :root {
-  --primary-background: #FBFBFB;
+  --primary-background: #F7F7F7;
   --white-color: #ffffff;
   --text-color: #000000;
   --primary-color: #92CCE0;
@@ -9,4 +9,5 @@
 
 body{
   margin: 0;
+  background-color: var(--primary-background);
 }

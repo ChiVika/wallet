@@ -44,7 +44,7 @@ const Layout = observer(() => {
                     {loading && <>Загрузка...</>}
                 </div>
                 <Button>
-                    <img src="/add.svg" alt="add" className={styles['add']}/>
+                    <img src="/add.svg" alt="add" className={styles['add']} />
                     Добавить счет
                 </Button>
                 
