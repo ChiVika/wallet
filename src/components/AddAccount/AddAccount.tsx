@@ -14,19 +14,39 @@ function AddAccount({onClose} : AddAccountProps){
         name: '',
         balance: 0
     });
+    
     const mask = (card_number: string) => {
         return card_number.replace(/\D/g, '').slice(0, 16).replace(/(\d{4})/g, '$1 ').trim();
     };
+
     const card_number_output = (e: React.ChangeEvent<HTMLInputElement>) => {
         const formatted = mask(e.target.value);
         e.target.value = formatted;
+        const rawNumber = formatted.replace(/\s/g, '');
+        setFormData(prev => ({
+            ...prev,
+            number: rawNumber
+        }));
+
     };
+
+    const balance_output = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const balance = e.target.value;
+        e.target.value = balance;
+        setFormData(prev => ({
+            ...prev,
+            balance: formData.balance
+        }))
+
+    }
+    
 
     const InputChange = (field: string, value: string) => {
         setFormData(prev => ({
             ...prev,
             [field]: value
         }));
+        
     };
 
     const submit = async() => {
@@ -60,7 +80,7 @@ function AddAccount({onClose} : AddAccountProps){
 
                 <form className={styles['content']} onSubmit={submit}>
                     <Headling>Добавление счета</Headling>
-                    <Card balance={0} card={'1234 9067 6741 4531'} className={styles['card']} />
+                    <Card balance={formData.balance} card={formData.number} className={styles['card']} />
                     <label htmlFor="number" className={styles['labal']}>Номер счета</label>
                     <Input name='number' 
                         maxLength={19} 
@@ -76,6 +96,7 @@ function AddAccount({onClose} : AddAccountProps){
                     <Input name='balance' 
                         style={{marginBottom: '30px'}}
                         value={formData.balance}
+                        onInput={balance_output}
                         onChange={(e) => InputChange('balance', e.target.value)}
                     />
                     <Button type='submit'>Добавить</Button>
