@@ -3,18 +3,36 @@ import Headling from '../../components/Headling/Headling';
 import styles from './Layout.module.css';
 import cn from 'classnames';
 import Button from '../../components/Button/Button';
-import { useEffect } from 'react';
+import { useEffect, useRef, useState} from 'react';
 import AccountStore from '../../store/Account.store';
 import { observer } from 'mobx-react-lite';
+import AddAccount from '../../components/AddAccount/AddAccount';
 
 const Layout = observer(() => {
 
+    const [isOpen, setIsOpen] = useState<boolean>(false);
+    const ModalRef = useRef<HTMLDivElement>(null);
 
     const {accounts, loading, getAllAccount} = AccountStore;
     useEffect(() => {
         getAllAccount();
     }, [getAllAccount])
 
+     useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (ModalRef.current && !ModalRef.current.contains(event.target as Node)) {
+                closeModal();
+            }
+        }
+
+        if (isOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isOpen]);
 
 
     const maskAccount = (cardNumber: string) => {
@@ -26,6 +44,17 @@ const Layout = observer(() => {
 
         return `${firstNumber} ${mask} ${mask} ${lastNumber}`
     }
+
+    const openModal = () => {
+        setIsOpen(true);
+    }
+
+    const closeModal = () => {
+        setIsOpen(false);
+    }
+
+
+
 
 
     return(
@@ -43,15 +72,24 @@ const Layout = observer(() => {
                     ))}
                     {loading && <>Загрузка...</>}
                 </div>
-                <Button>
+                <Button onClick={openModal}>
                     <img src="/add.svg" alt="add" className={styles['add']} />
                     Добавить счет
                 </Button>
                 
             </div>
-            <div className={styles['body']}>
-                <Outlet/>
-            </div>
+                <div className={styles['body']}>
+                    {isOpen && 
+                        <div className={styles['modal-overlay']}>
+                            <div ref={ModalRef}>
+                                <AddAccount onClose={closeModal}/>
+                            </div>
+                        </div>
+                        
+                    }
+                    
+                    <Outlet/>
+                </div>
         </div>
         </>
         

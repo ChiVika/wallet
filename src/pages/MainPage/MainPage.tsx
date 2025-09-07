@@ -22,8 +22,6 @@ const MainPage = observer(() =>{
                     style={{width: '5px', height: '18px'}}
                 />
             </Card>
-
-            
         </div>
         
         </>
