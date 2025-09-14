@@ -42,3 +42,17 @@
     top: -40px;
     left: 53px;
 }
+.add-transaction{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 38px;
+    height: 38px;
+    position: absolute;
+    top: 14px;
+    right: 18px;
+    margin-top: -30px;
+    margin-right: 20px;
+}
+
+

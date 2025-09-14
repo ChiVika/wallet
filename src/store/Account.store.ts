@@ -81,5 +81,6 @@ class AccountStore{
             })
         }
     }
+
 }
 export default new AccountStore;

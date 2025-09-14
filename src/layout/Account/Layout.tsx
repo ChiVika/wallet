@@ -53,6 +53,8 @@ const Layout = observer(() => {
         setIsOpen(false);
     }
 
+    
+
 
 
 
@@ -87,7 +89,7 @@ const Layout = observer(() => {
                         </div>
                         
                     }
-                    
+
                     <Outlet/>
                 </div>
         </div>
