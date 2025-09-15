@@ -1,19 +1,27 @@
 
 import styles from './Modal.module.css';
 import Headling from '../Headling/Headling';
-import { useRef, useState } from 'react';
+import {  useRef, useState, type FormEvent} from 'react';
 import Input from '../Input/Input';
 import Button from '../Button/Button';
 import { PORT } from '../../helpers/API';
 import axios from 'axios';
 import type { ModalProps } from './Modul.props';
+import TransactionStore from '../../store/Transaction.store';
+import { observer } from 'mobx-react-lite';
 
-function Modal({onClose, account_id}: ModalProps){
-
+const Modal = observer(({onClose, account_id}: ModalProps) =>{
+    const [moreAmount, setMoreAmount] = useState<boolean>(false)
     const [formData, setFormData] = useState({
-        category_id: 0,
+        account_id: account_id,
+        category_type: 'income',
+        category_name: '',
         amount: 0
     });
+
+    const {getCurrentTransactions} = TransactionStore;
+
+    
 
     const InputChange = (field: string, value: string) => {
         setFormData(prev => ({
@@ -23,30 +31,45 @@ function Modal({onClose, account_id}: ModalProps){
         
     };
 
-    const submit = async() => {
-        const postData = {
-            account_id: account_id,
-            category_id: formData.category_id,
-            amount: formData.amount
-        }
-        await axios.post(`${PORT}/transactions/add`,
-            postData,
-            {
-                headers: { 
-                'Content-Type': 'application/json'
-                }
+    const submit = async(e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        try{
+            const postData = {
+                account_id: account_id,
+                category_type: formData.category_type,
+                category_name: formData.category_name,
+                amount: formData.amount
             }
-        );
-        setFormData({
-            category_id: 0,
-            amount: 0
-        });
-        onClose();
-        
+            await axios.post(`${PORT}/transactions/add`,
+                postData,
+                {
+                    headers: { 
+                    'Content-Type': 'application/json'
+                    }
+                }
+            );
+            console.log('Транзакция создана');
+            setFormData({
+                account_id: account_id,
+                category_type: '',
+                category_name: '',
+                amount: 0
+            });
+            setMoreAmount(false)
+            getCurrentTransactions(account_id);
+            onClose();
+
+        }
+        catch{
+            console.log('Транзакция не создана');
+            setMoreAmount(true);
+        }
+         
     }
+    const ModalRef = useRef<HTMLDivElement>(null);
 
     
-    const ModalRef = useRef<HTMLDivElement>(null);
+
     return(
         <div className={styles['container-modal']} >
             <div className={styles['body']}>
@@ -58,17 +81,26 @@ function Modal({onClose, account_id}: ModalProps){
                         <form className={styles['content']} onSubmit={submit}>
                             <Headling style={{fontSize: '28px', marginBottom: '100px'}}>Добавить транзакцию</Headling>
                             <label htmlFor="type" className={styles['labal']}>Тип операции</label>
-                            <Input name="type"/>
+                            <select 
+                                name='category_type' 
+                                value={formData.category_type}
+                                onChange={(e) => InputChange('category_type', e.target.value)}>
+                                    <option value={'income'}>Пополнение</option>
+                                    <option value={'expense'}>Расход</option>
+                            </select>
                             <label htmlFor="payment" className={styles['labal']}>Назначение</label>
                             <Input 
                                 name="payment" 
-                                value={formData.category_id}
-                                onChange={(e) => InputChange('category_id', e.target.value)}/>
+                                value={formData.category_name}
+                                onChange={(e) => InputChange('category_name', e.target.value)}/>
                             <label htmlFor="summa" className={styles['labal']}>Сумма</label>
                             <Input 
                                 name="summa"
                                 value={formData.amount}
-                                onChange={(e) => InputChange('amount', e.target.value)}/>
+                                onChange={(e) => InputChange('amount', e.target.value)}
+                                style={{marginBottom: '70px'}}/>
+                            {moreAmount && <div className={styles['error']}>Не хваетает средств на счете</div>}
+
                             <Button>Добавить</Button>
                         </form>
                     </div>
@@ -79,5 +111,6 @@ function Modal({onClose, account_id}: ModalProps){
         </div>
         
     )
-}
+    
+})
 export default Modal

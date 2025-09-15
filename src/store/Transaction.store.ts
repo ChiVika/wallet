@@ -36,6 +36,7 @@ class TransactionStore{
             })
         }
     }
+    
 }
 
 export default new TransactionStore;
