@@ -31,13 +31,17 @@ function AddAccount({onClose} : AddAccountProps){
     };
 
     const balance_output = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const balance = e.target.value;
-        e.target.value = balance;
+        const inputValue = e.target.value;
+        const numericValue = inputValue.replace(/[^\d]/g, '');
+        e.target.value = numericValue;
+        const balanceNumber = numericValue === '' ? 0 : parseInt(numericValue, 10);
+        
         setFormData(prev => ({
             ...prev,
-            balance: formData.balance
-        }))
+            balance: balanceNumber
+        }));
 
+        
     }
     
 
@@ -86,12 +90,14 @@ function AddAccount({onClose} : AddAccountProps){
                         maxLength={19} 
                         value={formData.number}
                         onInput={card_number_output} 
-                        onChange={(e) => InputChange('number', e.target.value)}/>
+                        onChange={(e) => InputChange('number', e.target.value)}
+                        required/>
+                        
                     <label htmlFor="name" className={styles['labal']}>Назначение</label>
                     <Input name='name'
                         value={formData.name}
                         onChange={(e) => InputChange('name', e.target.value)}
-                    />
+                        required/>
                     <label htmlFor="balance" className={styles['labal']}>Текущий баланс</label>
                     <Input name='balance' 
                         style={{marginBottom: '30px'}}

@@ -8,6 +8,10 @@ class TransactionStore{
     loading: boolean = false;
     currentTransactions: Transaction[] = [];
 
+    category_type: 'income' | 'expense' = 'income';
+    category_name: string = '';
+    amount: number = 0;
+
     constructor(){
         makeAutoObservable(this);
     }

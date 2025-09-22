@@ -1,7 +1,7 @@
 
 import styles from './Modal.module.css';
 import Headling from '../Headling/Headling';
-import {  useRef, useState, type FormEvent} from 'react';
+import {  useRef, useState} from 'react';
 import Input from '../Input/Input';
 import Button from '../Button/Button';
 import { PORT } from '../../helpers/API';
@@ -9,6 +9,7 @@ import axios from 'axios';
 import type { ModalProps } from './Modul.props';
 import TransactionStore from '../../store/Transaction.store';
 import { observer } from 'mobx-react-lite';
+import AccountStore from '../../store/Account.store';
 
 const Modal = observer(({onClose, account_id}: ModalProps) =>{
     const [moreAmount, setMoreAmount] = useState<boolean>(false)
@@ -20,7 +21,7 @@ const Modal = observer(({onClose, account_id}: ModalProps) =>{
     });
 
     const {getCurrentTransactions} = TransactionStore;
-
+    const {getAccountById} = AccountStore;
     
 
     const InputChange = (field: string, value: string) => {
@@ -31,8 +32,8 @@ const Modal = observer(({onClose, account_id}: ModalProps) =>{
         
     };
 
-    const submit = async(e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+    const submit = async(e: React.FormEvent) => {
+        e.preventDefault()
         try{
             const postData = {
                 account_id: account_id,
@@ -57,6 +58,7 @@ const Modal = observer(({onClose, account_id}: ModalProps) =>{
             });
             setMoreAmount(false)
             getCurrentTransactions(account_id);
+            getAccountById(account_id);
             onClose();
 
         }
@@ -92,13 +94,15 @@ const Modal = observer(({onClose, account_id}: ModalProps) =>{
                             <Input 
                                 name="payment" 
                                 value={formData.category_name}
-                                onChange={(e) => InputChange('category_name', e.target.value)}/>
+                                onChange={(e) => InputChange('category_name', e.target.value)}
+                                required/>
                             <label htmlFor="summa" className={styles['labal']}>Сумма</label>
                             <Input 
                                 name="summa"
                                 value={formData.amount}
                                 onChange={(e) => InputChange('amount', e.target.value)}
-                                style={{marginBottom: '70px'}}/>
+                                style={{marginBottom: '70px'}}
+                                required/>
                             {moreAmount && <div className={styles['error']}>Не хваетает средств на счете</div>}
 
                             <Button>Добавить</Button>
