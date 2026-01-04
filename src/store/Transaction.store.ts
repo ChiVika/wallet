@@ -12,6 +12,8 @@ class TransactionStore{
     category_name: string = '';
     amount: number = 0;
 
+    openModal: boolean = false
+
     constructor(){
         makeAutoObservable(this);
     }
@@ -39,6 +41,13 @@ class TransactionStore{
                 this.loading = false
             })
         }
+    }
+
+    functionOpenModal = () => {
+        this.openModal = true
+    }
+    functionCloseModal = () => {
+        this.openModal = false
     }
     
 }

@@ -55,4 +55,9 @@
     margin-right: 20px;
 }
 
+.button-card{
+    position: absolute;
+    top: 18px;
+    right: 18px;
+}
 

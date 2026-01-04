@@ -9,6 +9,7 @@ import History from "../../components/History/History";
 import TransactionStore from "../../store/Transaction.store";
 
 import Modal from "../../components/Modal/Modal";
+import ButtonInfo from "../../components/ButtonInfo/ButtonInfo";
 
 
 const MainPage = observer(() =>{
@@ -60,9 +61,7 @@ const MainPage = observer(() =>{
         <>
         <div className={styles['container']}>
             <Card balance={currentAccount?.balance || 0} card={currentAccount?.card_number || ''}>
-                <img src="/more.svg" alt="more" className={styles['more']} 
-                    style={{width: '5px', height: '18px'}}
-                />
+                <ButtonInfo color="#ffffff" className={styles["button-card"]}/>
             </Card>
             <div className={styles['datas']}>
                 <div className={styles['block']}>
@@ -84,7 +83,7 @@ const MainPage = observer(() =>{
             <Headling className={styles['history']}>История</Headling>
             <History account_id={id ? parseInt(id) : 0}/>
         </div>
-        {isOpen && <Modal onClose={closeModal} account_id={id ? parseInt(id) : 0} />}
+        {isOpen && <Modal onClose={closeModal} account_id={id ? parseInt(id) : 0} mode="create"/>}
 
         
         </>

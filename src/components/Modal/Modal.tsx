@@ -11,7 +11,7 @@ import TransactionStore from '../../store/Transaction.store';
 import { observer } from 'mobx-react-lite';
 import AccountStore from '../../store/Account.store';
 
-const Modal = observer(({onClose, account_id}: ModalProps) =>{
+const Modal = observer(({onClose, account_id, mode = 'create'}: ModalProps) =>{
     const [moreAmount, setMoreAmount] = useState<boolean>(false)
     const [formData, setFormData] = useState({
         account_id: account_id,
@@ -80,32 +80,40 @@ const Modal = observer(({onClose, account_id}: ModalProps) =>{
                         <button onClick={onClose} className={styles['close']}>
                             <img src="/add.svg" alt="close" className={styles['img-close']}/>
                         </button>
-                        <form className={styles['content']} onSubmit={submit}>
-                            <Headling style={{fontSize: '28px', marginBottom: '100px'}}>Добавить транзакцию</Headling>
-                            <label htmlFor="type" className={styles['labal']}>Тип операции</label>
-                            <select 
-                                name='category_type' 
-                                value={formData.category_type}
-                                onChange={(e) => InputChange('category_type', e.target.value)}>
-                                    <option value={'income'}>Пополнение</option>
-                                    <option value={'expense'}>Расход</option>
-                            </select>
-                            <label htmlFor="payment" className={styles['labal']}>Назначение</label>
-                            <Input 
-                                name="payment" 
-                                value={formData.category_name}
-                                onChange={(e) => InputChange('category_name', e.target.value)}
-                                required/>
-                            <label htmlFor="summa" className={styles['labal']}>Сумма</label>
-                            <Input 
-                                name="summa"
-                                value={formData.amount}
-                                onChange={(e) => InputChange('amount', e.target.value)}
-                                style={{marginBottom: '70px'}}
-                                required/>
-                            {moreAmount && <div className={styles['error']}>Не хваетает средств на счете</div>}
+                         <form className={styles['content']} onSubmit={submit}>
+                            {mode === 'create' && 
+                                <>
+                                    <Headling style={{fontSize: '28px', marginBottom: '100px'}}>Добавить транзакцию</Headling>
+                                    <label htmlFor="type" className={styles['labal']}>Тип операции</label>
+                                    <select 
+                                        name='category_type' 
+                                        value={formData.category_type}
+                                        onChange={(e) => InputChange('category_type', e.target.value)}>
+                                            <option value={'income'}>Пополнение</option>
+                                            <option value={'expense'}>Расход</option>
+                                    </select>
+                                    <label htmlFor="payment" className={styles['labal']}>Назначение</label>
+                                    <Input 
+                                        name="payment" 
+                                        value={formData.category_name}
+                                        onChange={(e) => InputChange('category_name', e.target.value)}
+                                        required/>
+                                    <label htmlFor="summa" className={styles['labal']}>Сумма</label>
+                                    <Input 
+                                        name="summa"
+                                        value={formData.amount}
+                                        onChange={(e) => InputChange('amount', e.target.value)}
+                                        style={{marginBottom: '70px'}}
+                                        required/>
+                                    {moreAmount && <div className={styles['error']}>Не хваетает средств на счете</div>}
 
-                            <Button>Добавить</Button>
+                                    <Button>Добавить</Button>
+                                </>}
+                                {mode === 'edit' && 
+                                    <>
+                                        <Headling style={{fontSize: '28px', marginBottom: '100px'}}>Изменение транзакции</Headling>
+                                    </>
+                                }
                         </form>
                     </div>
                 </div>
