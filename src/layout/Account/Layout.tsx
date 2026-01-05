@@ -7,6 +7,7 @@ import { useEffect, useRef, useState} from 'react';
 import AccountStore from '../../store/Account.store';
 import { observer } from 'mobx-react-lite';
 import AddAccount from '../../components/AddAccount/AddAccount';
+import { useClickOutside } from '../../hooks/useClickOutside';
 
 const Layout = observer(() => {
 
@@ -18,21 +19,7 @@ const Layout = observer(() => {
         getAllAccount();
     }, [getAllAccount])
 
-     useEffect(() => {
-        function handleClickOutside(event: MouseEvent) {
-            if (ModalRef.current && !ModalRef.current.contains(event.target as Node)) {
-                closeModal();
-            }
-        }
-
-        if (isOpen) {
-            document.addEventListener('mousedown', handleClickOutside);
-        }
-
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, [isOpen]);
+     
 
 
     const maskAccount = (cardNumber: string) => {
@@ -52,10 +39,7 @@ const Layout = observer(() => {
     const closeModal = () => {
         setIsOpen(false);
     }
-
-    
-
-
+    useClickOutside(ModalRef, closeModal, isOpen);
 
 
 
@@ -87,9 +71,7 @@ const Layout = observer(() => {
                                 <AddAccount onClose={closeModal}/>
                             </div>
                         </div>
-                        
                     }
-
                     <Outlet/>
                 </div>
         </div>

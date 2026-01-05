@@ -1,7 +1,7 @@
 
 import styles from './Modal.module.css';
 import Headling from '../Headling/Headling';
-import {  useRef, useState} from 'react';
+import {  useEffect, useRef, useState} from 'react';
 import Input from '../Input/Input';
 import Button from '../Button/Button';
 import { PORT } from '../../helpers/API';
@@ -11,8 +11,10 @@ import TransactionStore from '../../store/Transaction.store';
 import { observer } from 'mobx-react-lite';
 import AccountStore from '../../store/Account.store';
 
+
 const Modal = observer(({onClose, account_id, mode = 'create'}: ModalProps) =>{
     const [moreAmount, setMoreAmount] = useState<boolean>(false)
+    const [visible, setVisible] = useState<boolean>(true);
     const [formData, setFormData] = useState({
         account_id: account_id,
         category_type: 'income',
@@ -23,7 +25,7 @@ const Modal = observer(({onClose, account_id, mode = 'create'}: ModalProps) =>{
     const {getCurrentTransactions} = TransactionStore;
     const {getAccountById} = AccountStore;
     
-
+    
     const InputChange = (field: string, value: string) => {
         setFormData(prev => ({
             ...prev,
@@ -60,6 +62,7 @@ const Modal = observer(({onClose, account_id, mode = 'create'}: ModalProps) =>{
             getCurrentTransactions(account_id);
             getAccountById(account_id);
             onClose();
+            setVisible(false);
 
         }
         catch{
@@ -69,14 +72,30 @@ const Modal = observer(({onClose, account_id, mode = 'create'}: ModalProps) =>{
          
     }
     const ModalRef = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (ModalRef.current && !ModalRef.current.contains(event.target as Node)) {
+                onClose();
+            }
+        }
+        
+        if (visible) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+        
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [visible, onClose]);
+    
 
     
 
     return(
-        <div className={styles['container-modal']} >
+        <div className={styles['container-modal']} ref={ModalRef}>
             <div className={styles['body']}>
                 <div className={styles['modal-overlay']}>
-                    <div ref={ModalRef}>
+                    <div>
                         <button onClick={onClose} className={styles['close']}>
                             <img src="/add.svg" alt="close" className={styles['img-close']}/>
                         </button>
@@ -109,11 +128,11 @@ const Modal = observer(({onClose, account_id, mode = 'create'}: ModalProps) =>{
 
                                     <Button>Добавить</Button>
                                 </>}
-                                {mode === 'edit' && 
+                                {/* {mode === 'edit' && 
                                     <>
                                         <Headling style={{fontSize: '28px', marginBottom: '100px'}}>Изменение транзакции</Headling>
                                     </>
-                                }
+                                } */}
                         </form>
                     </div>
                 </div>

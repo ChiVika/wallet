@@ -8,17 +8,16 @@ import ButtonInfo from '../ButtonInfo/ButtonInfo';
 import ModalInfo from '../ModalInfo/ModalInfo';
 import axios from 'axios';
 import { PORT } from '../../helpers/API';
-import Modal from '../Modal/Modal';
+import type { formField } from '../Modal2/Modal2.props';
+import Modal2 from '../Modal2/Modal2';
 const History = observer(({account_id}: HistoryProps) =>{
     const {loading, currentTransactions, getCurrentTransactions} = TransactionStore;
     const [activeModalId, setActiveModalId] = useState<number | null>(null);
     const [openEditModal, setOpenEditModal] = useState<boolean>(false);
-
-    const openModal = () => {
-        setOpenEditModal(true);
+    const closeModalInfo = () => {
+        setActiveModalId(null)
     }
-
-    const closeModal = () => {
+    const closeModalEdit = () => {
         setOpenEditModal(false);
     }
     useEffect(() => {
@@ -57,9 +56,40 @@ const History = observer(({account_id}: HistoryProps) =>{
 
     const editTransactions = (id: number) => {
         console.log("Открываем форму для редактирования id", id)
-        openModal();
+        setOpenEditModal(true);
+    }
+    const submitEdit = () => {
+
     }
 
+
+    const transactionFields: formField[] = [
+        {
+            name: 'category_type',
+            type: 'select',
+            label: 'Тип операции',
+            placeholder: null,
+            required: true,
+            options: [
+                { value: 'income', label: 'Пополнение' },
+                { value: 'expense', label: 'Расход' }
+            ]
+        },
+        {
+            name: 'category_name',
+            type: 'text',
+            label: 'Назначение',
+            placeholder: 'Введите назначение',
+            required: true
+        },
+        {
+            name: 'amount',
+            type: 'number',
+            label: 'Сумма',
+            placeholder: '0',
+            required: true
+        }
+    ];
 
     
 
@@ -80,12 +110,23 @@ const History = observer(({account_id}: HistoryProps) =>{
                                 visible={activeModalId === item.id} 
                                 deleteElement={deleteTransaction}
                                 editElement={editTransactions}
+                                onClose={closeModalInfo}
                                 />}
                         
                     </div>
                 ))}
                 </div>
-                {openEditModal && <Modal onClose={closeModal} account_id={account_id} mode='edit'/>}
+                {openEditModal && 
+                <Modal2 
+                    account_id={account_id}
+                    children='Добавить транзакцию'
+                    visible={openEditModal}
+                    onClose={closeModalEdit}
+                    submit={submitEdit}
+                    fields={transactionFields}
+                    initialData={{ account_id: account_id }}
+                    submitText="Добавить"
+                />}
                 {loading && <>Загрузка...</>}
             </div>
             
