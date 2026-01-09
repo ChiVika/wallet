@@ -6,16 +6,23 @@ import styles from './Modal2.module.css';
 import type { formField, Modal2Props } from './Modal2.props';
 import { useClickOutside } from '../../hooks/useClickOutside';
 
-const Modal2 = ({children, account_id, onClose, visible, submit, fields, initialData = {}, submitText = 'Добавить'}: Modal2Props) => {
+
+const Modal2 = ({children, account_id, onClose, visible, submit, onChange, fields, initialData = {}, submitText = 'Добавить'}: Modal2Props) => {
   const [formData, setFormData] = useState<Record<string, unknown>>({});
+
   const ModalRef = useRef<HTMLDivElement>(null);
   useClickOutside(ModalRef, onClose, visible);
   const ChangeFunction = (fieldName: string, value: string) => {
     setFormData(prev => ({
       ...prev,
-      [fieldName]: fieldName === 'amount' || fieldName === 'account_id' ? (value === '' ? null : Number(value)): value
+      [fieldName]: value
     }));
+    if (onChange) {
+      onChange(fieldName, value);
+    }
   };
+
+
 
   useEffect(() => {
     if (visible) {
@@ -87,6 +94,30 @@ const Modal2 = ({children, account_id, onClose, visible, submit, fields, initial
             </select>
           </div>
         );
+       case 'datalist':
+        return (
+            <div key={field.name} className={styles['field-group']}>
+                <label htmlFor={field.name} className={styles['labal']}>
+                    {field.label}
+                </label>
+                <input
+                    name={field.name}
+                    list={`${field.name}-list`}
+                    value={String(value)}
+                    onChange={(e) => ChangeFunction(field.name, e.target.value)}
+                    className={styles.select}
+                    placeholder={field.placeholder || ''}
+                    required={isRequired}
+                />
+                <datalist id={`${field.name}-list`}>
+                    {field.options?.map(option => (
+                        <option key={option.value} value={option.value}>
+                            {option.label}
+                        </option>
+                    ))}
+                </datalist>
+            </div>
+        );
 
       case 'number':
         return (
@@ -105,7 +136,6 @@ const Modal2 = ({children, account_id, onClose, visible, submit, fields, initial
             />
           </div>
         );
-
       default: 
         return (
           <div key={field.name} className={styles['field-group']}>
@@ -135,7 +165,6 @@ const Modal2 = ({children, account_id, onClose, visible, submit, fields, initial
             <button onClick={onClose} className={styles['close']}type="button">
               <img src="/add.svg" alt="close" className={styles['img-close']} />
             </button>
-            
             <form className={styles['content']} onSubmit={handleSubmit}>
               <Headling style={{ fontSize: '28px', marginBottom: '30px' }}>
                 {children}

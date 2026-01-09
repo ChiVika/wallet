@@ -14,6 +14,12 @@ const History = observer(({account_id}: HistoryProps) =>{
     const {loading, currentTransactions, getCurrentTransactions} = TransactionStore;
     const [activeModalId, setActiveModalId] = useState<number | null>(null);
     const [openEditModal, setOpenEditModal] = useState<boolean>(false);
+    const [idTransaction, setIdTransaction] = useState<number>(0);
+    const [formData, setFormData] = useState({
+        "category_type": "", 
+        "category_name": "", 
+        "amount": null
+    })
     const closeModalInfo = () => {
         setActiveModalId(null)
     }
@@ -42,6 +48,10 @@ const History = observer(({account_id}: HistoryProps) =>{
     }
 
 
+    useEffect(() => {
+        console.log("activeModalId: ",  activeModalId);
+    }, [activeModalId])
+
 
     const deleteTransaction = async(id: number) => {
         try{
@@ -54,13 +64,45 @@ const History = observer(({account_id}: HistoryProps) =>{
         }
     }
 
-    const editTransactions = (id: number) => {
+    const editTransactions = async(id: number) => {
         console.log("Открываем форму для редактирования id", id)
+        try{
+            const res = await axios.get(`${PORT}/transaction/${id}`)
+            setFormData(res.data.data);
+        }
+        catch{
+            console.log('Неудача');
+        }
+        setIdTransaction(id);
         setOpenEditModal(true);
     }
-    const submitEdit = () => {
-
+    const submitEdit = async() => {
+        try{
+            console.log("Отправляем на сервер:", {
+                "type": formData.category_type, 
+                "name": formData.category_name, 
+                "amount": formData.amount
+            });
+            const res = await axios.put(`${PORT}/transactions/edit/${idTransaction}`, { 
+                "type": formData.category_type, 
+                "name": formData.category_name, 
+                "amount": formData.amount
+            });
+            console.log("Данные отправки на сервер:", res.data)
+            getCurrentTransactions(account_id);
+            setOpenEditModal(false);
+        }
+        catch(error){
+            console.log('Неудача', error);
+        }
     }
+
+    const handleDataChange = (fieldName: string, value: string | number) => {
+        setFormData(prev => ({
+            ...prev,
+            [fieldName]: value
+        }));
+    };
 
 
     const transactionFields: formField[] = [
@@ -119,13 +161,14 @@ const History = observer(({account_id}: HistoryProps) =>{
                 {openEditModal && 
                 <Modal2 
                     account_id={account_id}
-                    children='Добавить транзакцию'
+                    children='Редактировать транзакцию'
                     visible={openEditModal}
                     onClose={closeModalEdit}
                     submit={submitEdit}
+                    onChange = {handleDataChange}
                     fields={transactionFields}
-                    initialData={{ account_id: account_id }}
-                    submitText="Добавить"
+                    initialData={formData}
+                    submitText="Сохранить"
                 />}
                 {loading && <>Загрузка...</>}
             </div>

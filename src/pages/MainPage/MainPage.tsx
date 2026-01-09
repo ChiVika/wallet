@@ -20,6 +20,7 @@ const MainPage = observer(() => {
     const account_id = id ? parseInt(id) : 0;
 
     const [visible, setVisible] = useState<boolean>(false);
+    const [categories, setCategories] = useState<{name: string}[]>([]);
 
     const openModal = () => {
         setVisible(true);
@@ -35,6 +36,29 @@ const MainPage = observer(() => {
         }
     }, [id, getAccountById]); 
 
+    const getCategories = async() => {
+        try{
+            const res = await axios.get(`${PORT}/category`);
+            const result = res.data.data;
+            const arr = result.map((item: {name: string}) => ({
+                name: item.name
+            }));
+            console.log(arr);
+            setCategories(arr);
+        }
+        catch{
+            console.log('не удалось загрузить категории')
+        }
+    }
+    useEffect(() => {
+        getCategories();
+        
+    }, [])
+    const categoryOptions = categories.map(cat => ({
+        value: cat.name,
+        label: cat.name
+    }));
+
     const transactionFields: formField[] = [
         {
             name: 'category_type',
@@ -49,10 +73,11 @@ const MainPage = observer(() => {
         },
         {
             name: 'category_name',
-            type: 'text',
+            type: 'datalist',
             label: 'Назначение',
             placeholder: 'Введите назначение',
-            required: true
+            required: true,
+            options: categoryOptions
         },
         {
             name: 'amount',
@@ -139,7 +164,6 @@ const MainPage = observer(() => {
                 <Headling className={styles['history']}>История</Headling>
                 <History account_id={account_id}/>
             </div>
-            
             <Modal2 
                 account_id={account_id}
                 children='Добавить транзакцию'

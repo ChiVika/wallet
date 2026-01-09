@@ -24,7 +24,6 @@ class TransactionStore{
             const res = await axios.get<APIResponse<Transaction[]>>(`${PORT}/transactions/${account_id}`);
             runInAction(() => {
                 if(res.data.success){
-                    console.log(res.data.data)
                     this.currentTransactions = res.data.data;
                 }
             })
