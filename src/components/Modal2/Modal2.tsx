@@ -82,7 +82,7 @@ const Modal2 = ({children, account_id, onClose, visible, submit, onChange, field
               name={field.name}
               value={String(value)}
               onChange={(e) => ChangeFunction(field.name, e.target.value)}
-              className={styles.select}
+              className={styles['select']}
               required={isRequired}
             >
               {!isRequired && <option value="">Выберите...</option>}
@@ -170,7 +170,7 @@ const Modal2 = ({children, account_id, onClose, visible, submit, onChange, field
                 {children}
               </Headling>
               {fields.map(renderField)}
-              <Button type="submit">{submitText}</Button>
+              <Button type="submit" className={styles['button']}>{submitText}</Button>
             </form>
           </div>
         </div>

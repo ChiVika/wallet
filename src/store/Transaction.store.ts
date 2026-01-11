@@ -11,7 +11,6 @@ class TransactionStore{
     category_type: 'income' | 'expense' = 'income';
     category_name: string = '';
     amount: number = 0;
-
     openModal: boolean = false
 
     constructor(){

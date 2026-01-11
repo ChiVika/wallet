@@ -78,11 +78,6 @@ const History = observer(({account_id}: HistoryProps) =>{
     }
     const submitEdit = async() => {
         try{
-            console.log("Отправляем на сервер:", {
-                "type": formData.category_type, 
-                "name": formData.category_name, 
-                "amount": formData.amount
-            });
             const res = await axios.put(`${PORT}/transactions/edit/${idTransaction}`, { 
                 "type": formData.category_type, 
                 "name": formData.category_name, 
